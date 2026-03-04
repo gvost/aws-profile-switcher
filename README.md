@@ -16,7 +16,7 @@ Interactive AWS CLI profile picker for zsh / Oh My Zsh.
 
 ## Install (Oh My Zsh)
 
-### Option A: Clone into custom plugins
+### Clone into custom plugins
 
 ```sh
 git clone <THIS_REPO_URL> ~/.oh-my-zsh/custom/plugins/aws-profile-selector
