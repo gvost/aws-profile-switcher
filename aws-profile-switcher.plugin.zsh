@@ -6,6 +6,7 @@
 # ------------------------------------------------
 
 : "${AWS_PROFILE_SELECTOR_AUTORUN:=1}"
+: "${AWS_PROFILE_SELECTOR_CONFIRM_AUTORUN:=1}"
 : "${AWS_PROFILE_SELECTOR_SHOW_ACCOUNT_ID:=0}"
 : "${AWS_PROFILE_SELECTOR_CACHE_TTL:=600}"
 : "${AWS_PROFILE_SELECTOR_CACHE_FILE:=$HOME/.aws/aws-profile-selector-cache}"
@@ -174,6 +175,32 @@ _awsps_print_banner() {
 }
 
 # ------------------------------------------------
+# Autorun prompt
+# ------------------------------------------------
+
+_awsps_confirm_autorun() {
+  local reply
+
+  while true; do
+    read -r "?Run AWS profile selector now? [y/N]: " reply || return 1
+
+    reply="$(_awsps_sanitize "$reply")"
+    reply="${reply:l}"
+
+    case "$reply" in
+      y|yes)
+        return 0
+        ;;
+      ""|n|no)
+        return 1
+        ;;
+    esac
+
+    echo "Please enter y or n."
+  done
+}
+
+# ------------------------------------------------
 # Main selector
 # ------------------------------------------------
 
@@ -256,8 +283,18 @@ alias ap='awsp'
 # Autorun
 # ------------------------------------------------
 
-if [[ -o interactive ]] \
-  && [[ "$AWS_PROFILE_SELECTOR_AUTORUN" == "1" ]] \
-  && [[ -z "${AWS_PROFILE:-}" ]]; then
+_awsps_maybe_autorun() {
+  command -v aws >/dev/null 2>&1 || return 0
+  [[ -o interactive ]] || return 0
+  [[ "$AWS_PROFILE_SELECTOR_AUTORUN" == "1" ]] || return 0
+  [[ -z "${AWS_PROFILE:-}" ]] || return 0
+
+  if [[ "$AWS_PROFILE_SELECTOR_CONFIRM_AUTORUN" == "1" ]]; then
+    echo
+    _awsps_confirm_autorun || return 0
+  fi
+
   select_aws_profile 2>/dev/null || true
-fi
+}
+
+_awsps_maybe_autorun

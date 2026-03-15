@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- Startup confirmation prompt before autorun opens the AWS profile selector.
+- Configurable `AWS_PROFILE_SELECTOR_CONFIRM_AUTORUN` toggle for enabling or disabling the confirmation step.
+
+### Improved
+
+- Manual `awsp` and `ap` commands remain available even when startup autorun is skipped.
+
+---
+
 ## [1.0.0] - 2026-03-14
 
 ### Added
